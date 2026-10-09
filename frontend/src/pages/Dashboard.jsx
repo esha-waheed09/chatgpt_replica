@@ -40,12 +40,23 @@ function Dashboard() {
     return localStorage.getItem("theme") === "dark";
   });
 
+  const [resumeMode, setResumeMode] = useState(() => {
+    return localStorage.getItem("resume_mode") === "on";
+  });
+
   useEffect(() => {
     localStorage.setItem(
       "theme",
       darkMode ? "dark" : "light"
     );
   }, [darkMode]);
+
+  useEffect(() => {
+    localStorage.setItem(
+      "resume_mode",
+      resumeMode ? "on" : "off"
+    );
+  }, [resumeMode]);
 
   useEffect(() => {
     if (!accessToken) {
@@ -210,6 +221,7 @@ function Dashboard() {
     try {
       const requestData = {
         message,
+        resume_mode: resumeMode,
       };
 
       if (activeConversationId) {
@@ -464,7 +476,35 @@ function Dashboard() {
                 ▾
               </span>
             </button>
+
+            {resumeMode && (
+              <span className="resume-mode-badge">
+                Resume mode
+              </span>
+            )}
           </div>
+
+          <button
+            type="button"
+            className={`resume-mode-toggle ${
+              resumeMode ? "active" : ""
+            }`}
+            onClick={() =>
+              setResumeMode(
+                (currentMode) =>
+                  !currentMode
+              )
+            }
+            title="Answer using Eshaal's resume"
+          >
+            <span>
+              Resume mode
+            </span>
+
+            <span className="resume-mode-status">
+              {resumeMode ? "ON" : "OFF"}
+            </span>
+          </button>
         </header>
 
         <section className="chat-content">
@@ -490,13 +530,15 @@ function Dashboard() {
               </div>
 
               <h1>
-                How can I help you?
+                {resumeMode
+                  ? "Ask about the resume"
+                  : "How can I help you?"}
               </h1>
 
               <p>
-                Ask anything and start a
-                conversation with your AI
-                assistant.
+                {resumeMode
+                  ? "Resume mode is on. Answers will be grounded in Eshaal's resume."
+                  : "Ask anything and start a conversation with your AI assistant."}
               </p>
 
               <div className="suggestion-grid">
@@ -665,7 +707,11 @@ function Dashboard() {
                   handleSubmit(event);
                 }
               }}
-              placeholder="Message ChatGPT Replica"
+              placeholder={
+                resumeMode
+                  ? "Ask about skills, projects, experience..."
+                  : "Message ChatGPT Replica"
+              }
               rows={1}
               disabled={
                 sending ||

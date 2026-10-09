@@ -18,6 +18,36 @@
   border-bottom-color: #2f2f2f;
 }
 
+.chatgpt-app.dark-mode .resume-mode-badge {
+  background: #1e293b;
+  color: #93c5fd;
+}
+
+.chatgpt-app.dark-mode .resume-mode-toggle {
+  background: #202020;
+  border-color: #303030;
+  color: #dddddd;
+}
+
+.chatgpt-app.dark-mode .resume-mode-toggle:hover {
+  background: #292929;
+  border-color: #414141;
+}
+
+.chatgpt-app.dark-mode .resume-mode-toggle.active {
+  background: #1e293b;
+  border-color: #334155;
+  color: #93c5fd;
+}
+
+.chatgpt-app.dark-mode .resume-mode-status {
+  color: #777777;
+}
+
+.chatgpt-app.dark-mode .resume-mode-toggle.active .resume-mode-status {
+  color: #60a5fa;
+}
+
 /* Sidebar */
 
 .chatgpt-app.dark-mode .chat-sidebar {

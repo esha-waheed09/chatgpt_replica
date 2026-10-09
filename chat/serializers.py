@@ -14,6 +14,11 @@ class ChatSerializer(serializers.Serializer):
         allow_null=True,
     )
 
+    resume_mode = serializers.BooleanField(
+        required=False,
+        default=False,
+    )
+
 
 class MessageSerializer(serializers.ModelSerializer):
     class Meta:

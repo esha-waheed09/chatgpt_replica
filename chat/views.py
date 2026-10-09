@@ -8,6 +8,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .models import Conversation, Message
+from .rag import get_resume_context
 from .redis_service import (
     clear_conversation_from_redis,
     get_messages_from_redis,
@@ -37,6 +38,10 @@ class ChatView(APIView):
         message = serializer.validated_data["message"]
         conversation_id = serializer.validated_data.get(
             "conversation_id"
+        )
+        resume_mode = serializer.validated_data.get(
+            "resume_mode",
+            False,
         )
 
         if conversation_id:
@@ -128,12 +133,39 @@ class ChatView(APIView):
                     error,
                 )
 
+        if resume_mode:
+            resume_context = get_resume_context(
+                message
+            )
+
+            if resume_context:
+                system_content = (
+                    "You are a helpful AI assistant answering "
+                    "questions about Eshaal Waheed's resume. "
+                    "Use ONLY the resume context below. "
+                    "If the context is insufficient, say so "
+                    "clearly. Do not invent resume facts.\n\n"
+                    "Resume context:\n"
+                    f"{resume_context}"
+                )
+            else:
+                system_content = (
+                    "You are a helpful AI assistant answering "
+                    "questions about Eshaal Waheed's resume. "
+                    "No resume context could be retrieved for "
+                    "this question. Tell the user you could not "
+                    "find matching resume information, and do "
+                    "not invent resume facts."
+                )
+        else:
+            system_content = (
+                "You are a helpful AI assistant."
+            )
+
         messages = [
             {
                 "role": "system",
-                "content": (
-                    "You are a helpful AI assistant."
-                ),
+                "content": system_content,
             }
         ]
 
